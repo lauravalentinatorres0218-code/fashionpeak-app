@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo — Fashion Peak</title>
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+  .skeleton {
+    background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: var(--radius);
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  .skeleton-card { height: 280px; border-radius: var(--radius-lg); }
+
+  .btn-add.added {
+    background: var(--success);
+    animation: pulse 0.3s ease;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+
+  .stock-low { color: var(--warning) !important; }
+  .stock-out { color: var(--primary) !important; }
+
+  .product-card-img .out-badge {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: white;
+    z-index: 2;
+  }
+
+  .filter-count {
+    font-size: 11px; font-weight: 600; color: var(--gray-400);
+    margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="catalogo.html" class="nav-logo">
+    <svg class="nav-logo-icon" viewBox="0 0 36 36" fill="none">
+      <rect width="36" height="36" rx="7" fill="#252b3d"/>
+      <rect x="6" y="8" width="3.5" height="20" fill="white"/>
+      <rect x="6" y="8" width="11" height="3.5" fill="white"/>
+      <rect x="6" y="17.5" width="9" height="3" fill="white"/>
+      <rect x="20" y="8" width="3.5" height="20" fill="#E8294A"/>
+      <path d="M23.5 8 Q32 8 32 15 Q32 22 23.5 22" stroke="#E8294A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-logo-text">Fashion Peak</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="catalogo.html" class="active">🏷️ Catálogo</a></li>
+    <li><a href="carrito.html">🛒 Carrito <span class="badge" id="nav-cart-badge">0</span></a></li>
+    <li id="nav-admin-link" style="display:none;"><a href="admin.html">⚙️ Admin</a></li>
+  </ul>
+
+  <div class="nav-right" id="nav-right"></div>
+</nav>
+
+<div class="page-container">
+  <div class="page-header" style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <div>
+      <h1 class="page-title">Catálogo de Productos</h1>
+      <p class="page-subtitle" id="product-count">Cargando...</p>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-tabs" id="filter-tabs">
+      <button class="filter-tab active" data-cat="todos" onclick="setFilter('todos', this)">
+        Todos <span class="filter-count" id="count-todos"></span>
+      </button>
+      <button class="filter-tab" data-cat="MUJER" onclick="setFilter('MUJER', this)">
+        Mujer <span class="filter-count" id="count-MUJER"></span>
+      </button>
+      <button class="filter-tab" data-cat="HOMBRE" onclick="setFilter('HOMBRE', this)">
+        Hombre <span class="filter-count" id="count-HOMBRE"></span>
+      </button>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar producto..."
+             oninput="handleSearch(this.value)">
+    </div>
+  </div>
+
+  <div class="product-grid" id="product-grid">
+    <!-- Skeletons iniciales -->
+    ${Array(8).fill('<div class="skeleton skeleton-card"></div>').join('')}
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/api.js"></script>
+<script>
+  let allProducts = [];
+  let currentFilter = 'todos';
+  let searchQuery   = '';
+  let cart = JSON.parse(localStorage.getItem('fp_cart') || '[]');
+
+  // ── INIT ──────────────────────────────────────────────────
+  (async () => {
+    await Auth.init();
+    buildNavbar('catalogo');
+    await loadProducts();
+  })();
+
+  // ── CARGAR PRODUCTOS ──────────────────────────────────────
+  async function loadProducts() {
+    const grid = document.getElementById('product-grid');
+    // Skeletons
+    grid.innerHTML = Array(8).fill('<div class="skeleton skeleton-card"></div>').join('');
+
+    const res = await API.productos.getAll();
+
+    if (!res.ok) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+        <span class="emoji">⚠️</span>
+        <h3>Error al cargar productos</h3>
+        <p>${res.mensaje || 'Verifica que el backend esté corriendo en localhost:8080'}</p>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="loadProducts()">Reintentar</button>
+      </div>`;
+      return;
+    }
+
+    allProducts = res.data || [];
+    updateCounts();
+    renderProducts();
+  }
+
+  // ── CONTADORES DE TABS ────────────────────────────────────
+  function updateCounts() {
+    document.getElementById('count-todos').textContent  = allProducts.length;
+    document.getElementById('count-MUJER').textContent  = allProducts.filter(p => p.categoria === 'MUJER').length;
+    document.getElementById('count-HOMBRE').textContent = allProducts.filter(p => p.categoria === 'HOMBRE').length;
+  }
+
+  // ── FILTRAR ───────────────────────────────────────────────
+  function getFiltered() {
+    return allProducts.filter(p => {
+      const matchCat    = currentFilter === 'todos' || p.categoria === currentFilter;
+      const matchSearch = p.nombre.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }
+
+  function setFilter(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts();
+  }
+
+  let searchTimer;
+  function handleSearch(val) {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      searchQuery = val;
+      renderProducts();
+    }, 250);
+  }
+
+  // ── RENDER ────────────────────────────────────────────────
+  function renderProducts() {
+    const filtered = getFiltered();
+    const grid = document.getElementById('product-grid');
+    const count = document.getElementById('product-count');
+    count.textContent = `${filtered.length} producto(s) disponibles`;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+        <span class="emoji">🔍</span>
+        <h3>Sin resultados</h3>
+        <p>No encontramos productos para tu búsqueda.</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map((p, i) => {
+      const inCart  = cart.find(c => c.id === p.id);
+      const lowStock = p.stock > 0 && p.stock <= 5;
+      const noStock  = p.stock === 0;
+
+      return `
+      <div class="product-card" style="animation-delay:${i * 0.05}s">
+        <div class="product-card-img" style="position:relative;">
+          <span>${p.emoji || '👕'}</span>
+          ${noStock ? '<div class="out-badge">Agotado</div>' : ''}
+        </div>
+        <div class="product-card-body">
+          <p class="product-cat">${p.categoria}</p>
+          <p class="product-name">${p.nombre}</p>
+          <p class="product-price">$${Number(p.precio).toLocaleString('es-CO')}</p>
+          <p class="product-stock ${lowStock ? 'stock-low' : noStock ? 'stock-out' : ''}">
+            ${noStock ? 'Sin stock' : lowStock ? '⚠️ Solo ' + p.stock + ' disponibles' : p.stock + ' disponibles'}
+          </p>
+          <button class="btn-add ${inCart ? 'added' : ''}" id="btn-${p.id}"
+                  onclick="addToCart(${p.id})"
+                  ${noStock ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
+            ${inCart ? '✅ En el carrito (' + inCart.qty + ')' : 'Agregar al carrito'}
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── CARRITO ───────────────────────────────────────────────
+  async function addToCart(id) {
+    const product = allProducts.find(p => p.id === id);
+    if (!product || product.stock === 0) return;
+
+    const btn = document.getElementById(`btn-${id}`);
+    btn.disabled = true;
+    btn.textContent = 'Agregando...';
+
+    if (Auth.isLoggedIn()) {
+      // Si hay sesión → también persiste en BD
+      const res = await API.carrito.agregar(id, 1);
+      if (!res.ok) {
+        showToast('⚠️ ' + (res.mensaje || 'Error'), 'error');
+        btn.disabled = false;
+        renderProducts();
+        return;
+      }
+    }
+
+    // Siempre mantener carrito local también
+    const existing = cart.find(i => i.id === id);
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ id: product.id, nombre: product.nombre, precio: Number(product.precio),
+                  categoria: product.categoria, emoji: product.emoji, stock: product.stock, qty: 1 });
+    }
+    localStorage.setItem('fp_cart', JSON.stringify(cart));
+    buildNavbar();
+    renderProducts();
+    showToast(`✅ ${product.nombre} agregado`);
+  }
+</script>
+</body>
+</html>

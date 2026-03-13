@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fashion Peak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="navbar" id="navbar" style="display:none;">
+  <div class="nav-brand" onclick="go('catalogo')">
+    <svg class="nav-logo" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="5" fill="#0f1320"/>
+      <rect x="5" y="7" width="3" height="18" fill="white"/>
+      <rect x="5" y="7" width="9" height="3" fill="white"/>
+      <rect x="5" y="15" width="7" height="2.5" fill="white"/>
+      <rect x="17" y="7" width="3" height="18" fill="#E8294A"/>
+      <path d="M20 7 Q27 7 27 13 Q27 19 20 19" stroke="#E8294A" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-name">Fashion <span>Peak</span></span>
+  </div>
+  <ul class="nav-links" id="nav-links"></ul>
+  <div class="nav-end" id="nav-end"></div>
+</nav>
+
+<!-- ═══ LOGIN ═══ -->
+<div class="page active" id="page-login">
+  <div class="login-bg-dots"></div>
+  <div class="login-glow"></div>
+  <div class="login-glow2"></div>
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <svg class="login-logo-lg" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="9" fill="#0f1320"/>
+        <rect x="7" y="11" width="5" height="30" fill="white"/>
+        <rect x="7" y="11" width="14" height="5" fill="white"/>
+        <rect x="7" y="24" width="10" height="4" fill="white"/>
+        <rect x="25" y="11" width="5" height="30" fill="#E8294A"/>
+        <path d="M30 11 Q43 11 43 20.5 Q43 30 30 30" stroke="#E8294A" stroke-width="5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="login-brand-name">Fashion Peak</span>
+    </div>
+    <h1 class="login-title">Bienvenida</h1>
+    <p class="login-sub">Inicia sesión en tu cuenta</p>
+    <div class="err-box" id="login-err"></div>
+    <div class="form-group">
+      <label class="form-label">Correo electrónico</label>
+      <input type="email" id="l-email" class="form-input" placeholder="correo@ejemplo.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <div class="pwd-wrap">
+        <input type="password" id="l-pwd" class="form-input" placeholder="••••••••">
+        <button class="pwd-eye" onclick="togglePwd()">👁</button>
+      </div>
+    </div>
+    <button class="btn btn-red btn-lg btn-block" id="login-btn" onclick="doLogin()">Ingresar</button>
+    <a class="cat-link" onclick="go('registro')" style="margin-top:10px;">¿No tienes cuenta? Regístrate →</a>
+    <a class="cat-link" onclick="go('catalogo')">Ver catálogo sin iniciar sesión →</a>
+    <div class="login-hint">
+      <p class="hint-lbl">Accesos de prueba</p>
+      <div class="hint-row">
+        <button class="btn btn-light btn-sm" onclick="fill('admin@fashionpeak.com','password')">⚙️ Admin</button>
+        <button class="btn btn-light btn-sm" onclick="fill('carlos@gmail.com','password')">🛍️ Cliente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REGISTRO ═══ -->
+<div class="page" id="page-registro">
+  <div class="login-bg-dots"></div>
+  <div class="login-glow"></div>
+  <div class="login-glow2"></div>
+  <div class="login-card" style="max-width:460px;">
+    <div class="login-logo-wrap">
+      <svg class="login-logo-lg" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="9" fill="#0f1320"/>
+        <rect x="7" y="11" width="5" height="30" fill="white"/>
+        <rect x="7" y="11" width="14" height="5" fill="white"/>
+        <rect x="7" y="24" width="10" height="4" fill="white"/>
+        <rect x="25" y="11" width="5" height="30" fill="#E8294A"/>
+        <path d="M30 11 Q43 11 43 20.5 Q43 30 30 30" stroke="#E8294A" stroke-width="5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="login-brand-name">Fashion Peak</span>
+    </div>
+    <h1 class="login-title">Crear cuenta</h1>
+    <p class="login-sub">Únete a Fashion Peak 🛍️</p>
+    <div class="err-box" id="reg-err"></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input type="text" id="r-nombre" class="form-input" placeholder="Tu nombre">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Apellido</label>
+        <input type="text" id="r-apellido" class="form-input" placeholder="Tu apellido">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Correo o teléfono</label>
+      <input type="text" id="r-contacto" class="form-input" placeholder="correo@ejemplo.com o 3001234567">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <div class="pwd-wrap">
+        <input type="password" id="r-pwd" class="form-input" placeholder="Mínimo 6 caracteres">
+        <button class="pwd-eye" onclick="togglePwdReg()">👁</button>
+      </div>
+    </div>
+    <button class="btn btn-red btn-lg btn-block" id="reg-btn" onclick="doRegister()">Crear cuenta</button>
+    <a class="cat-link" onclick="go('login')" style="margin-top:12px;">¿Ya tienes cuenta? Inicia sesión →</a>
+  </div>
+</div>
+
+<!-- ═══ CATÁLOGO ═══ -->
+<div class="page" id="page-catalogo">
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <p class="hero-eyebrow">Nueva colección</p>
+        <h1 class="hero-title">Moda que<br><em>te define</em></h1>
+        <p class="hero-sub">Prendas premium para cada momento de tu vida</p>
+      </div>
+      <div class="hero-stats">
+        <div class="h-stat"><p class="h-stat-n" id="hs-total">8</p><p class="h-stat-l">Productos</p></div>
+        <div class="h-stat"><p class="h-stat-n">2</p><p class="h-stat-l">Categorías</p></div>
+        <div class="h-stat"><p class="h-stat-n">100%</p><p class="h-stat-l">Premium</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div class="pills">
+      <button class="pill on" data-cat="Todos" onclick="setFilter(this)">Todos</button>
+      <button class="pill" data-cat="MUJER" onclick="setFilter(this)">Mujer</button>
+      <button class="pill" data-cat="HOMBRE" onclick="setFilter(this)">Hombre</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span class="result-count" id="cat-count"></span>
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Buscar…" oninput="setQ(this.value)">
+      </div>
+    </div>
+  </div>
+  <div class="prod-wrap">
+    <div class="prod-grid" id="prod-grid"></div>
+  </div>
+</div>
+
+<!-- ═══ CARRITO ═══ -->
+<div class="page" id="page-carrito">
+  <div class="wrap">
+    <div class="pg-head">
+      <h1 class="pg-title">Mi Carrito</h1>
+    </div>
+    <div id="cart-body"></div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN ═══ -->
+<div class="page" id="page-admin">
+  <div class="wrap">
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-ico" style="background:rgba(15,19,32,0.07)">📦</div><div><p class="stat-val" id="s-total">—</p><p class="stat-lbl">Total productos</p></div></div>
+      <div class="stat" style="animation-delay:.06s"><div class="stat-ico" style="background:rgba(232,41,74,0.07)">👗</div><div><p class="stat-val" id="s-mujer">—</p><p class="stat-lbl">Categoría Mujer</p></div></div>
+      <div class="stat" style="animation-delay:.12s"><div class="stat-ico" style="background:rgba(59,130,246,0.07)">👕</div><div><p class="stat-val" id="s-hombre">—</p><p class="stat-lbl">Categoría Hombre</p></div></div>
+      <div class="stat" style="animation-delay:.18s"><div class="stat-ico" style="background:rgba(22,163,74,0.07)">🛒</div><div><p class="stat-val" id="s-pedidos">—</p><p class="stat-lbl">Pedidos totales</p></div></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab on" onclick="switchTab('productos',this)">📦 Productos</button>
+      <button class="admin-tab" onclick="switchTab('pedidos',this)">🛒 Pedidos</button>
+    </div>
+    <!-- PRODUCTOS -->
+    <div class="admin-section on" id="tab-productos">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div><h1 class="pg-title">Gestión de Productos</h1><p class="pg-sub">CRUD completo — MySQL</p></div>
+        <button class="btn btn-red" onclick="openAdd()">+ Agregar</button>
+      </div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="admin-tbody"></tbody>
+      </table></div>
+    </div>
+    <!-- PEDIDOS -->
+    <div class="admin-section" id="tab-pedidos">
+      <div style="margin-bottom:18px;">
+        <h1 class="pg-title">Gestión de Pedidos</h1>
+        <p class="pg-sub">Todos los pedidos — actualiza estados</p>
+      </div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Orden</th><th>Cliente</th><th>Items</th><th>Total</th><th>Estado</th><th>Fecha</th><th>Acción</th></tr></thead>
+        <tbody id="pedidos-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MIS PEDIDOS ═══ -->
+<div class="page" id="page-mispedidos">
+  <div class="wrap">
+    <div class="pg-head">
+      <h1 class="pg-title">Mis Pedidos</h1>
+      <p class="pg-sub">Historial de todas tus compras</p>
+    </div>
+    <div id="mispedidos-body"></div>
+  </div>
+</div>
+
+<!-- ═══ PERFIL ═══ -->
+<div class="page" id="page-perfil">
+  <div class="wrap" style="max-width:700px;">
+    <div class="pg-head">
+      <h1 class="pg-title">Mi Perfil</h1>
+      <p class="pg-sub">Administra tu información personal</p>
+    </div>
+    <!-- AVATAR CARD -->
+    <div style="background:#fff;border-radius:var(--r-xl);padding:28px;border:1px solid var(--g200);box-shadow:var(--sh);margin-bottom:18px;display:flex;align-items:center;gap:22px;">
+      <div id="perfil-avatar" style="width:72px;height:72px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:#fff;flex-shrink:0;border:3px solid rgba(232,41,74,0.2);"></div>
+      <div>
+        <p id="perfil-nombre" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:3px;"></p>
+        <p id="perfil-email" style="font-size:13px;color:var(--g400);margin-bottom:6px;"></p>
+        <span id="perfil-rol" class="chip"></span>
+      </div>
+    </div>
+    <!-- EDITAR DATOS -->
+    <div style="background:#fff;border-radius:var(--r-xl);padding:28px;border:1px solid var(--g200);box-shadow:var(--sh);margin-bottom:18px;">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;margin-bottom:18px;">✏️ Editar información</h2>
+      <div class="err-box" id="perfil-err"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" id="p-nombre" class="form-input" placeholder="Tu nombre">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apellido</label>
+          <input type="text" id="p-apellido" class="form-input" placeholder="Tu apellido">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" id="p-email" class="form-input" placeholder="correo@ejemplo.com">
+      </div>
+      <button class="btn btn-red" id="perfil-btn" onclick="guardarPerfil()">Guardar cambios</button>
+    </div>
+    <!-- CAMBIAR CONTRASEÑA -->
+    <div style="background:#fff;border-radius:var(--r-xl);padding:28px;border:1px solid var(--g200);box-shadow:var(--sh);">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;margin-bottom:18px;">🔒 Cambiar contraseña</h2>
+      <div class="err-box" id="pwd-err"></div>
+      <div class="form-group">
+        <label class="form-label">Contraseña actual</label>
+        <div class="pwd-wrap">
+          <input type="password" id="p-pwd-actual" class="form-input" placeholder="••••••••">
+          <button class="pwd-eye" onclick="toggleF('p-pwd-actual')">👁</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nueva contraseña</label>
+          <div class="pwd-wrap">
+            <input type="password" id="p-pwd-nueva" class="form-input" placeholder="Mínimo 6 caracteres">
+            <button class="pwd-eye" onclick="toggleF('p-pwd-nueva')">👁</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar contraseña</label>
+          <div class="pwd-wrap">
+            <input type="password" id="p-pwd-conf" class="form-input" placeholder="Repetir contraseña">
+            <button class="pwd-eye" onclick="toggleF('p-pwd-conf')">👁</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-navy" id="pwd-btn" onclick="cambiarPassword()">Cambiar contraseña</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ÉXITO ═══ -->
+<div class="page" id="page-success">
+  <div class="success-card">
+    <span class="s-icon">✅</span>
+    <h1 class="s-title">¡Compra exitosa!</h1>
+    <p class="s-text">Gracias por confiar en Fashion Peak.<br>Tu pedido está en camino.</p>
+    <div class="s-detail">
+      <div class="s-row"><span class="lbl">Orden</span><span class="val" style="color:var(--red)">#FP-<span id="order-n"></span></span></div>
+      <div class="s-row"><span class="lbl">Estado</span><span class="val"><span class="chip ch-ok">Confirmado ✅</span></span></div>
+      <div class="s-row"><span class="lbl">Entrega</span><span class="val">2 – 4 días hábiles</span></div>
+    </div>
+    <button class="btn btn-red btn-lg btn-block" onclick="go('catalogo')">Seguir comprando</button>
+  </div>
+</div>
+
+<!-- MODAL PRODUCTO -->
+<div class="overlay" id="prod-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head"><h2 class="modal-title" id="modal-ttl">Agregar producto</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="err-box" id="modal-err"></div>
+    <div class="form-group"><label class="form-label">Nombre *</label><input type="text" id="f-nom" class="form-input" placeholder="Nombre del producto"></div>
+    <div class="form-group"><label class="form-label">Descripción</label><input type="text" id="f-des" class="form-input" placeholder="Descripción breve"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Categoría *</label>
+        <select id="f-cat" class="form-input"><option value="MUJER">Mujer</option><option value="HOMBRE">Hombre</option></select></div>
+      <div class="form-group"><label class="form-label">Emoji</label>
+        <select id="f-emo" class="form-input">
+          <option value="👕">👕 Camiseta</option><option value="👖">👖 Pantalón</option>
+          <option value="👗">👗 Vestido</option><option value="🧥">🧥 Hoodie</option>
+          <option value="👟">👟 Zapatos</option><option value="👜">👜 Bolso</option>
+        </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Precio (COP) *</label><input type="number" id="f-pre" class="form-input" placeholder="32000"></div>
+      <div class="form-group"><label class="form-label">Stock *</label><input type="number" id="f-sto" class="form-input" placeholder="10"></div>
+    </div>
+    <div style="display:flex;gap:9px;justify-content:flex-end;margin-top:6px;">
+      <button class="btn btn-light" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-red" onclick="saveProd()" id="save-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- CONFIRM CARRITO -->
+<div class="confirm-overlay" id="confirm-overlay" onclick="if(event.target===this)document.getElementById('confirm-overlay').classList.remove('open')">
+  <div class="confirm-box">
+    <div style="font-size:42px;margin-bottom:10px;">🛒</div>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;margin-bottom:8px;">Eliminar producto</h3>
+    <p id="confirm-msg" style="font-size:13px;color:var(--g500);margin-bottom:20px;line-height:1.5;"></p>
+    <div style="display:flex;gap:9px;justify-content:center;">
+      <button class="btn btn-light" onclick="document.getElementById('confirm-overlay').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-red" id="confirm-ok">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ELIMINAR -->
+<div class="overlay" id="del-modal" onclick="if(event.target===this)closeDel()">
+  <div class="modal" style="max-width:340px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">🗑️</div>
+    <h2 class="modal-title" style="margin-bottom:9px;">Eliminar producto</h2>
+    <p style="color:var(--g500);font-size:13px;margin-bottom:22px;line-height:1.6;">¿Eliminar <strong id="del-nm"></strong>?<br>Esta acción no se puede deshacer.</p>
+    <div style="display:flex;gap:9px;justify-content:center;">
+      <button class="btn btn-light" onclick="closeDel()">Cancelar</button>
+      <button class="btn btn-red" onclick="confirmDel()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+
+<!-- FAVORITOS PAGE -->
+<div class="page" id="page-favoritos">
+  <div class="wrap">
+    <div class="pg-head">
+      <h1 class="pg-title">♥ Mis Favoritos</h1>
+      <p class="pg-sub">Productos que guardaste</p>
+    </div>
+    <div class="prod-grid" id="favs-grid"></div>
+  </div>
+</div>
+
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer" id="main-footer" style="display:none;">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo-row">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="5" fill="#0f1320"/>
+          <rect x="5" y="7" width="3" height="18" fill="white"/>
+          <rect x="5" y="7" width="9" height="3" fill="white"/>
+          <rect x="5" y="15" width="7" height="2.5" fill="white"/>
+          <rect x="17" y="7" width="3" height="18" fill="#E8294A"/>
+          <path d="M20 7 Q27 7 27 13 Q27 19 20 19" stroke="#E8294A" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="footer-name">Fashion <span>Peak</span></span>
+      </div>
+      <p class="footer-tagline">Moda premium para cada momento<br>de tu vida.</p>
+      <div class="footer-socials">
+        <a class="social-btn" href="#" title="Instagram">📸</a>
+        <a class="social-btn" href="#" title="Facebook">👍</a>
+        <a class="social-btn" href="#" title="WhatsApp">💬</a>
+        <a class="social-btn" href="#" title="TikTok">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Tienda</p>
+      <a onclick="go('catalogo')">Catálogo</a>
+      <a onclick="go('carrito')">Carrito</a>
+      <a onclick="go('mispedidos')">Mis Pedidos</a>
+      <a onclick="go('favoritos')">Favoritos</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Información</p>
+      <a href="#">Sobre nosotros</a>
+      <a href="#">Política de devoluciones</a>
+      <a href="#">Envíos</a>
+      <a href="#">Términos y condiciones</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Contacto</p>
+      <p class="footer-contact">📍 Villavicencio, Meta</p>
+      <p class="footer-contact">📧 info@fashionpeak.com</p>
+      <p class="footer-contact">📞 +57 310 000 0000</p>
+      <div class="footer-pay">
+        <span class="pay-tag">VISA</span>
+        <span class="pay-tag" style="background:#003087;color:#fff">PayPal</span>
+        <span class="pay-tag" style="background:#FFD700;color:#333">Nequi</span>
+        <span class="pay-tag">PSE</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Fashion Peak — Todos los derechos reservados</p>
+    <p>Desarrollado por <span style="color:var(--red)">Laura Valentina Torres</span> · SENA Ficha 2977463</p>
+  </div>
+</footer>
+
+</body>
+</html>

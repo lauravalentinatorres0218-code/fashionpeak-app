@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin — Fashion Peak</title>
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+  .stat-card {
+    background:white; border-radius:var(--radius-lg); padding:20px 22px;
+    box-shadow:var(--shadow-sm); border:1px solid var(--gray-100);
+    display:flex; align-items:center; gap:14px; transition:var(--transition);
+  }
+  .stat-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+  .stat-icon { width:46px;height:46px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:22px; }
+  .stat-val { font-size:26px;font-weight:700;color:var(--gray-900);line-height:1; }
+  .stat-lbl { font-size:12px;color:var(--gray-500);margin-top:2px; }
+  .search-admin { position:relative; width:240px; }
+  .search-admin input { width:100%;padding:9px 16px 9px 36px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-size:13px;font-family:'DM Sans',sans-serif;background:white;outline:none;transition:var(--transition); }
+  .search-admin input:focus { border-color:var(--primary); }
+  .search-admin .si { position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:14px; }
+  .upload-area {
+    border:2px dashed var(--gray-200); border-radius:var(--radius); padding:20px;
+    text-align:center; cursor:pointer; transition:var(--transition);
+    background:var(--off-white);
+  }
+  .upload-area:hover { border-color:var(--primary); background:rgba(232,41,74,0.03); }
+  .spinner-sm { display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:6px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="catalogo.html" class="nav-logo">
+    <svg class="nav-logo-icon" viewBox="0 0 36 36" fill="none">
+      <rect width="36" height="36" rx="7" fill="#252b3d"/>
+      <rect x="6" y="8" width="3.5" height="20" fill="white"/>
+      <rect x="6" y="8" width="11" height="3.5" fill="white"/>
+      <rect x="6" y="17.5" width="9" height="3" fill="white"/>
+      <rect x="20" y="8" width="3.5" height="20" fill="#E8294A"/>
+      <path d="M23.5 8 Q32 8 32 15 Q32 22 23.5 22" stroke="#E8294A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-logo-text">Fashion Peak</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="catalogo.html">🏷️ Catálogo</a></li>
+    <li><a href="carrito.html">🛒 Carrito</a></li>
+    <li><a href="admin.html" class="active">⚙️ Admin</a></li>
+  </ul>
+  <div class="nav-right" id="nav-right"></div>
+</nav>
+
+<div class="page-container">
+
+  <!-- Stats -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;" id="stats-row">
+    <div class="skeleton" style="height:86px;border-radius:var(--radius-lg);"></div>
+    <div class="skeleton" style="height:86px;border-radius:var(--radius-lg);animation-delay:0.1s;"></div>
+    <div class="skeleton" style="height:86px;border-radius:var(--radius-lg);animation-delay:0.2s;"></div>
+    <div class="skeleton" style="height:86px;border-radius:var(--radius-lg);animation-delay:0.3s;"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="admin-header">
+    <div>
+      <h1 class="page-title">Gestión de Productos</h1>
+      <p class="page-subtitle">CRUD completo — Spring Boot + MySQL JDBC</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="search-admin">
+        <span class="si">🔍</span>
+        <input type="text" placeholder="Buscar producto..." oninput="filterTable(this.value)" id="table-search">
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">+ Nuevo producto</button>
+    </div>
+  </div>
+
+  <div class="admin-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Estado</th>
+          <th style="width:160px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="products-tbody">
+        <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray-400);">Cargando productos...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Crear/Editar -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Nuevo producto</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="grid-column:1/-1;">
+        <label class="form-label">Nombre del producto *</label>
+        <input type="text" id="f-nombre" class="form-control" placeholder="Ej: Camiseta slim fit premium">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <textarea id="f-desc" class="form-control" rows="2" placeholder="Descripción del producto..." style="resize:vertical;"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Categoría *</label>
+        <select id="f-cat" class="form-control">
+          <option value="MUJER">Mujer</option>
+          <option value="HOMBRE">Hombre</option>
+          <option value="ACCESORIOS">Accesorios</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ícono emoji</label>
+        <select id="f-emoji" class="form-control">
+          <option value="👕">👕 Camiseta</option>
+          <option value="👖">👖 Pantalón</option>
+          <option value="👗">👗 Vestido</option>
+          <option value="🧥">🧥 Abrigo/Hoodie</option>
+          <option value="👟">👟 Zapatos</option>
+          <option value="👜">👜 Bolso</option>
+          <option value="🧣">🧣 Accesorio</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Precio (COP) *</label>
+        <input type="number" id="f-precio" class="form-control" placeholder="32000" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stock disponible *</label>
+        <input type="number" id="f-stock" class="form-control" placeholder="10" min="0">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveProduct()" id="save-btn">
+        <span id="save-spinner" style="display:none;" class="spinner-sm"></span>
+        <span id="save-text">Guardar producto</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal-overlay" id="delete-overlay" onclick="if(event.target===this)closeDelete()">
+  <div class="modal" style="max-width:360px;text-align:center;">
+    <div style="font-size:52px;margin-bottom:12px;">⚠️</div>
+    <h2 class="modal-title" style="margin-bottom:8px;">Eliminar producto</h2>
+    <p style="color:var(--gray-500);font-size:14px;margin-bottom:6px;" id="delete-name"></p>
+    <p style="color:var(--gray-400);font-size:13px;margin-bottom:24px;">Esta acción no se puede deshacer.</p>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn btn-secondary" onclick="closeDelete()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmDelete()" id="delete-btn">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../js/api.js"></script>
+<script>
+  let products = [];
+  let filteredProducts = [];
+  let editingId = null;
+  let deletingId = null;
+
+  (async () => {
+    const user = await Auth.init();
+    if (!user || user.rol !== 'admin') {
+      showToast('⚠️ Acceso restringido', 'error');
+      setTimeout(() => window.location.href = 'login.html', 1500);
+      return;
+    }
+    buildNavbar('admin');
+    await loadProducts();
+  })();
+
+  async function loadProducts() {
+    const res = await API.productos.getAll();
+    if (!res.ok) { showToast('Error al cargar productos', 'error'); return; }
+    products = res.data || [];
+    filteredProducts = [...products];
+    renderStats();
+    renderTable();
+  }
+
+  function filterTable(val) {
+    const q = val.toLowerCase();
+    filteredProducts = products.filter(p =>
+      p.nombre.toLowerCase().includes(q) || p.categoria.toLowerCase().includes(q));
+    renderTable();
+  }
+
+  function renderStats() {
+    const stats = [
+      { label:'Total productos', value:products.length, icon:'📦', color:'var(--navy)' },
+      { label:'Categoría Mujer', value:products.filter(p=>p.categoria==='MUJER').length, icon:'👗', color:'var(--primary)' },
+      { label:'Categoría Hombre', value:products.filter(p=>p.categoria==='HOMBRE').length, icon:'👕', color:'#3b82f6' },
+      { label:'Unidades en stock', value:products.reduce((s,p)=>s+p.stock,0), icon:'📊', color:'var(--success)' },
+    ];
+    document.getElementById('stats-row').innerHTML = stats.map(s => `
+      <div class="stat-card">
+        <div class="stat-icon" style="background:${s.color}18;">${s.icon}</div>
+        <div><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>
+      </div>`).join('');
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('products-tbody');
+    if (filteredProducts.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:48px;color:var(--gray-400);">
+        Sin productos encontrados</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = filteredProducts.map(p => `
+      <tr>
+        <td>
+          <div class="td-product">
+            <span class="emoji" style="font-size:28px;">${p.emoji||'👕'}</span>
+            <div>
+              <div class="name" style="font-weight:600;color:var(--gray-900);font-size:14px;">${p.nombre}</div>
+              ${p.descripcion ? `<div style="font-size:11px;color:var(--gray-400);margin-top:2px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.descripcion}</div>` : ''}
+            </div>
+          </div>
+        </td>
+        <td><span class="chip chip-${p.categoria.toLowerCase()}">${p.categoria}</span></td>
+        <td class="td-price">$${Number(p.precio).toLocaleString('es-CO')}</td>
+        <td>
+          <span style="font-weight:600;color:${p.stock===0?'var(--primary)':p.stock<=5?'var(--warning)':'var(--success)'};">
+            ${p.stock} uds
+          </span>
+        </td>
+        <td>
+          <span style="font-size:12px;font-weight:500;color:${p.stock>0?'var(--success)':'var(--primary)'};">
+            ${p.stock>0?'✅ Disponible':'❌ Agotado'}
+          </span>
+        </td>
+        <td>
+          <div class="td-actions">
+            <button class="btn-edit" onclick="openEdit(${p.id})">✏️ Editar</button>
+            <button class="btn btn-danger" onclick="openDelete(${p.id},'${p.nombre.replace(/'/g,"\\'")}')">🗑</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  // ── MODAL CREATE/EDIT ─────────────────────────────────────
+  function openModal() {
+    editingId = null;
+    document.getElementById('modal-title').textContent = 'Nuevo producto';
+    document.getElementById('save-text').textContent = 'Guardar producto';
+    document.getElementById('f-nombre').value = '';
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-cat').value = 'MUJER';
+    document.getElementById('f-emoji').value = '👕';
+    document.getElementById('f-precio').value = '';
+    document.getElementById('f-stock').value = '';
+    document.getElementById('modal-overlay').classList.add('active');
+    document.getElementById('f-nombre').focus();
+  }
+
+  function openEdit(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    editingId = id;
+    document.getElementById('modal-title').textContent = 'Editar producto';
+    document.getElementById('save-text').textContent = 'Actualizar producto';
+    document.getElementById('f-nombre').value  = p.nombre;
+    document.getElementById('f-desc').value    = p.descripcion || '';
+    document.getElementById('f-cat').value     = p.categoria;
+    document.getElementById('f-emoji').value   = p.emoji || '👕';
+    document.getElementById('f-precio').value  = p.precio;
+    document.getElementById('f-stock').value   = p.stock;
+    document.getElementById('modal-overlay').classList.add('active');
+    document.getElementById('f-nombre').focus();
+  }
+
+  function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
+
+  async function saveProduct() {
+    const nombre = document.getElementById('f-nombre').value.trim();
+    const precio = parseFloat(document.getElementById('f-precio').value);
+    const stock  = parseInt(document.getElementById('f-stock').value);
+
+    if (!nombre) { document.getElementById('f-nombre').focus(); showToast('⚠️ El nombre es requerido','error'); return; }
+    if (isNaN(precio) || precio <= 0) { document.getElementById('f-precio').focus(); showToast('⚠️ Precio inválido','error'); return; }
+    if (isNaN(stock) || stock < 0)   { document.getElementById('f-stock').focus(); showToast('⚠️ Stock inválido','error'); return; }
+
+    const data = {
+      nombre,
+      descripcion: document.getElementById('f-desc').value.trim(),
+      categoria:   document.getElementById('f-cat').value,
+      emoji:       document.getElementById('f-emoji').value,
+      precio,
+      stock,
+      activo: true,
+    };
+
+    document.getElementById('save-spinner').style.display = 'inline-block';
+    document.getElementById('save-btn').disabled = true;
+
+    const res = editingId
+      ? await API.productos.actualizar(editingId, data)
+      : await API.productos.crear(data);
+
+    document.getElementById('save-spinner').style.display = 'none';
+    document.getElementById('save-btn').disabled = false;
+
+    if (res.ok) {
+      showToast(editingId ? '✅ Producto actualizado' : '✅ Producto creado');
+      closeModal();
+      await loadProducts();
+    } else {
+      showToast('⚠️ ' + (res.mensaje || 'Error al guardar'), 'error');
+    }
+  }
+
+  // ── MODAL DELETE ──────────────────────────────────────────
+  function openDelete(id, nombre) {
+    deletingId = id;
+    document.getElementById('delete-name').textContent = `"${nombre}"`;
+    document.getElementById('delete-overlay').classList.add('active');
+  }
+
+  function closeDelete() {
+    deletingId = null;
+    document.getElementById('delete-overlay').classList.remove('active');
+  }
+
+  async function confirmDelete() {
+    if (!deletingId) return;
+    const btn = document.getElementById('delete-btn');
+    btn.disabled = true; btn.textContent = 'Eliminando...';
+
+    const res = await API.productos.eliminar(deletingId);
+
+    btn.disabled = false; btn.textContent = 'Sí, eliminar';
+
+    if (res.ok) {
+      showToast('🗑️ Producto eliminado');
+      closeDelete();
+      await loadProducts();
+    } else {
+      showToast('⚠️ ' + (res.mensaje || 'Error al eliminar'), 'error');
+    }
+  }
+</script>
+</body>
+</html>
