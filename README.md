@@ -11,6 +11,18 @@ Fashion Peak es una tienda de moda online completa con backend en Node.js y fron
 
 ---
 
+## 🎯 Misión
+
+Ofrecer una experiencia de compra de moda online accesible, intuitiva y segura, conectando a los clientes con las últimas tendencias a través de una plataforma digital moderna, confiable y fácil de usar.
+
+---
+
+## 🔭 Visión
+
+Ser la plataforma de moda online de referencia en Colombia, reconocida por su diseño innovador, atención personalizada y compromiso con la satisfacción del cliente, expandiendo su catálogo y presencia digital año a año.
+
+---
+
 ## 🚀 Tecnologías
 
 | Capa | Tecnología |

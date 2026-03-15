@@ -46,6 +46,7 @@ function go(page){
   if(page==='mispedidos')loadMisPedidos();
   if(page==='perfil')loadPerfil();
   if(page==='favoritos')loadFavoritos();
+  if(page==='nosotros')renderNosotros();
   if(page==='success')document.getElementById('order-n').textContent=Math.floor(Math.random()*90000+10000);
   window.scrollTo(0,0);
 }
@@ -58,6 +59,7 @@ function renderNav(active){
       Carrito ${count>0?`<span class="cart-badge">${count}</span>`:''}
     </button></li>
     ${user?`<li><button onclick="go('mispedidos')" class="${active==='mispedidos'?'on':''}">Mis Pedidos</button></li><li><button onclick="go('perfil')" class="${active==='perfil'?'on':''}">Mi Perfil</button></li>`:''}    <li><button onclick="go('favoritos')" class="${active==='favoritos'?'on':''}">♥ Favoritos</button></li>
+    <li><button onclick="go('nosotros')" class="${active==='nosotros'?'on':''}">Nosotros</button></li>
     ${user&&user.rol==='admin'?`<li><button onclick="go('admin')" class="${active==='admin'?'on':''}">Admin</button></li>`:''}`;
   document.getElementById('nav-end').innerHTML=user
     ?`<div class="nav-user"><div class="nav-avatar">${user.nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div><span>${user.nombre}</span>${user.rol==='admin'?'<span class="r-badge">Admin</span>':''}</div><button class="btn btn-ghost btn-sm" onclick="doLogout()">Cerrar sesión</button>`
@@ -563,6 +565,42 @@ function loadFavoritos(){
       </div>
     </div>`;
   }).join('');
+}
+
+
+// ── SOBRE NOSOTROS ──
+function renderNosotros(){
+  const body=document.getElementById('page-nosotros');
+  body.innerHTML=`
+  <div style="max-width:800px;margin:0 auto;padding:48px 20px;">
+    <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-style:italic;color:var(--navy);margin-bottom:8px;">Sobre Fashion Peak</h1>
+    <div style="width:60px;height:3px;background:var(--red);border-radius:2px;margin-bottom:32px;"></div>
+    <div style="display:grid;gap:32px;">
+      <div style="background:#fff;border-radius:var(--r);padding:32px;border-left:4px solid var(--red);box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--red);margin-bottom:12px;">🎯 Misión</h2>
+        <p style="color:var(--g500);line-height:1.8;font-size:15px;">Ofrecer una experiencia de compra de moda online accesible, intuitiva y segura, conectando a los clientes con las últimas tendencias a través de una plataforma digital moderna, confiable y fácil de usar.</p>
+      </div>
+      <div style="background:#fff;border-radius:var(--r);padding:32px;border-left:4px solid var(--navy);box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--navy);margin-bottom:12px;">🔭 Visión</h2>
+        <p style="color:var(--g500);line-height:1.8;font-size:15px;">Ser la plataforma de moda online de referencia en Colombia, reconocida por su diseño innovador, atención personalizada y compromiso con la satisfacción del cliente, expandiendo su catálogo y presencia digital año a año.</p>
+      </div>
+      <div style="background:#fff;border-radius:var(--r);padding:32px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--navy);margin-bottom:20px;">💎 Nuestros Valores</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+          <div style="text-align:center;padding:20px 16px;background:var(--g50);border-radius:var(--r);"><div style="font-size:2rem;margin-bottom:8px;">✨</div><p style="font-weight:700;color:var(--navy);margin-bottom:6px;">Calidad</p><p style="font-size:12px;color:var(--g400);line-height:1.5;">Productos seleccionados con los más altos estándares de moda.</p></div>
+          <div style="text-align:center;padding:20px 16px;background:var(--g50);border-radius:var(--r);"><div style="font-size:2rem;margin-bottom:8px;">🤝</div><p style="font-weight:700;color:var(--navy);margin-bottom:6px;">Confianza</p><p style="font-size:12px;color:var(--g400);line-height:1.5;">Transacciones seguras y atención transparente al cliente.</p></div>
+          <div style="text-align:center;padding:20px 16px;background:var(--g50);border-radius:var(--r);"><div style="font-size:2rem;margin-bottom:8px;">🚀</div><p style="font-weight:700;color:var(--navy);margin-bottom:6px;">Innovación</p><p style="font-size:12px;color:var(--g400);line-height:1.5;">Tecnología moderna para una experiencia de compra sin fricción.</p></div>
+          <div style="text-align:center;padding:20px 16px;background:var(--g50);border-radius:var(--r);"><div style="font-size:2rem;margin-bottom:8px;">🌿</div><p style="font-weight:700;color:var(--navy);margin-bottom:6px;">Compromiso</p><p style="font-size:12px;color:var(--g400);line-height:1.5;">Con nuestros clientes, proveedores y la comunidad.</p></div>
+        </div>
+      </div>
+      <div style="background:var(--navy);border-radius:var(--r);padding:32px;color:#fff;text-align:center;">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-style:italic;margin-bottom:8px;">👩‍💻 Desarrolladora</h2>
+        <p style="font-size:1.1rem;font-weight:600;margin-bottom:4px;">Laura Valentina Torres Chaparro</p>
+        <p style="opacity:0.7;font-size:14px;">Aprendiz SENA — Análisis y Desarrollo de Software</p>
+        <p style="opacity:0.7;font-size:14px;">Ficha: 2977463 · Colombia 2026</p>
+      </div>
+    </div>
+  </div>`;
 }
 
 // INIT
