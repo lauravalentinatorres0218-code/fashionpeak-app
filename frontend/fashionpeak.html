@@ -1483,8 +1483,8 @@ function toast(msg,type='ok'){const el=document.getElementById('toast');el.textC
 
 
 // ── FAVORITOS ──
-function getFavs(){try{return JSON.parse(localStorage.getItem('fp_favs')||'[]');}catch{return[];}}
-function saveFavs(f){localStorage.setItem('fp_favs',JSON.stringify(f));}
+function getFavs(){const k='fp_favs_'+(Auth.user?Auth.user.id:'guest');try{return JSON.parse(localStorage.getItem(k)||'[]');}catch{return[];}}
+function saveFavs(f){const k='fp_favs_'+(Auth.user?Auth.user.id:'guest');localStorage.setItem(k,JSON.stringify(f));}
 function toggleFav(id, btn){
   const favs=getFavs();
   const idx=favs.indexOf(id);
