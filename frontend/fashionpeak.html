@@ -42,7 +42,7 @@ input,select{font-family:'Outfit',sans-serif;}
 /* ── PAGE SYSTEM ── */
 .page{display:none;min-height:100vh;}
 .page.active{display:block;}
-#page-login.active,#page-registro.active,#page-success.active{display:flex;}
+#page-login.active,#page-registro.active,#page-success.active{display:flex;}#page-recuperar.active{display:flex!important;align-items:center!important;justify-content:center!important;height:100vh!important;background:var(--navy)!important;}
 
 /* ══════════════════════════════════
    NAVBAR
@@ -641,7 +641,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       </svg>
       <span class="login-brand-name">Fashion Peak</span>
     </div>
-    <h1 class="login-title">Bienvenida</h1>
+    <h1 class="login-title">Bienvenido</h1>
     <p class="login-sub">Inicia sesión en tu cuenta</p>
     <div class="err-box" id="login-err"></div>
     <div class="form-group">
@@ -656,7 +656,8 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       </div>
     </div>
     <button class="btn btn-red btn-lg btn-block" id="login-btn" onclick="doLogin()">Ingresar</button>
-    <a class="cat-link" onclick="go('registro')" style="margin-top:10px;">¿No tienes cuenta? Regístrate →</a>
+    <a class="cat-link" onclick="go('recuperar')" style="margin-top:10px;color:var(--red);">¿Olvidaste tu contraseña? →</a>
+    <a class="cat-link" onclick="go('registro')" style="margin-top:4px;">¿No tienes cuenta? Regístrate →</a>
     <a class="cat-link" onclick="go('catalogo')">Ver catálogo sin iniciar sesión →</a>
     <div class="login-hint">
       <p class="hint-lbl">Accesos de prueba</p>
@@ -665,6 +666,48 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <button class="btn btn-light btn-sm" onclick="fill('carlos@gmail.com','password')">🛍️ Cliente</button>
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- ═══ RECUPERAR CONTRASEÑA ═══ -->
+<div class="page" id="page-recuperar" style="display:flex;align-items:center;justify-content:center;min-height:100vh;width:100vw;position:fixed;top:0;left:0;background:var(--bg);"><div class="login-bg-dots"></div><div class="login-glow"></div><div class="login-card" style="margin:auto;">
+    <div class="login-logo-wrap">
+      <svg class="login-logo-lg" viewBox="0 0 52 52" fill="none">
+        <rect width="52" height="52" rx="9" fill="#0f1320"/>
+        <rect x="7" y="11" width="5" height="30" fill="white"/>
+        <rect x="7" y="11" width="14" height="5" fill="white"/>
+        <rect x="7" y="24" width="10" height="4" fill="white"/>
+        <rect x="25" y="11" width="5" height="30" fill="#E8294A"/>
+        <path d="M30 11 Q43 11 43 20.5 Q43 30 30 30" stroke="#E8294A" stroke-width="5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="login-brand-name">Fashion Peak</span>
+    </div>
+    <h1 class="login-title">Recuperar contraseña</h1>
+    <p class="login-sub">Te enviaremos un enlace a tu correo</p>
+    <div class="err-box" id="rec-err"></div>
+    <div id="rec-step1">
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" id="rec-email" class="form-input" placeholder="correo@ejemplo.com">
+      </div>
+      <button class="btn btn-red btn-lg btn-block" onclick="recStep1()">Enviar enlace</button>
+    </div>
+    <div id="rec-step2" style="display:none;">
+      <div style="background:rgba(34,197,94,0.1);border:1.5px solid #22c55e;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#16a34a;text-align:center;">
+        ✅ Se envió un enlace de recuperación a tu correo
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nueva contraseña</label>
+        <input type="password" id="rec-pwd1" class="form-input" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña</label>
+        <input type="password" id="rec-pwd2" class="form-input" placeholder="••••••••">
+      </div>
+      <button class="btn btn-red btn-lg btn-block" onclick="recStep2()">Cambiar contraseña</button>
+    </div>
+    <a class="cat-link" onclick="go('login')" style="margin-top:10px;">← Volver al login</a>
   </div>
 </div>
 
@@ -989,7 +1032,7 @@ function go(page){
   const flexPages=['login','registro','success'];
   target.style.display=flexPages.includes(page)?'flex':'block';
   const navbar=document.getElementById('navbar');
-  if(page==='login'||page==='registro'){navbar.style.display='none';const ft=document.getElementById('main-footer');if(ft)ft.style.display='none';}
+  if(page==='login'||page==='registro'||page==='recuperar'){navbar.style.display='none';const ft=document.getElementById('main-footer');if(ft)ft.style.display='none';}
   else{navbar.style.display='flex';const ft=document.getElementById('main-footer');if(ft)ft.style.display='block';renderNav(page);}
   if(page==='catalogo')loadProducts();
   if(page==='carrito')renderCart();
@@ -1072,7 +1115,7 @@ async function doRegister(){
     document.getElementById('r-apellido').value='';
     document.getElementById('r-contacto').value='';
     document.getElementById('r-pwd').value='';
-    toast('✅ Bienvenida a Fashion Peak');
+    toast('✅ Bienvenido a Fashion Peak');
     go('catalogo');
   }catch(err){errEl.textContent=err.message||'Error al crear cuenta';errEl.style.display='block';}
   finally{btn.disabled=false;btn.textContent='Crear cuenta';}
@@ -1491,6 +1534,36 @@ function loadFavoritos(){
 }
 
 
+
+// ── RECUPERAR CONTRASEÑA ──
+function recStep1(){
+  const email = document.getElementById('rec-email').value.trim();
+  const err = document.getElementById('rec-err');
+  if(!email || !email.includes('@')){
+    err.textContent='Ingresa un correo válido';err.style.display='block';return;
+  }
+  err.style.display='none';
+  document.getElementById('rec-step1').style.display='none';
+  document.getElementById('rec-step2').style.display='block';
+}
+function recStep2(){
+  const pwd1 = document.getElementById('rec-pwd1').value;
+  const pwd2 = document.getElementById('rec-pwd2').value;
+  const err = document.getElementById('rec-err');
+  if(pwd1.length < 6){err.textContent='La contraseña debe tener al menos 6 caracteres';err.style.display='block';return;}
+  if(pwd1 !== pwd2){err.textContent='Las contraseñas no coinciden';err.style.display='block';return;}
+  err.style.display='none';
+  toast('✅ Contraseña actualizada exitosamente');
+  setTimeout(()=>{
+    document.getElementById('rec-step1').style.display='block';
+    document.getElementById('rec-step2').style.display='none';
+    document.getElementById('rec-email').value='';
+    document.getElementById('rec-pwd1').value='';
+    document.getElementById('rec-pwd2').value='';
+    go('login');
+  }, 1800);
+}
+
 // ── SOBRE NOSOTROS ──
 function renderNosotros(){
   const body=document.getElementById('page-nosotros');
@@ -1564,7 +1637,7 @@ if(savedUser){go('catalogo');}else{go('login');}
 
 
 <!-- ═══ FOOTER ═══ -->
-<footer class="footer" id="main-footer">
+<footer class="footer" id="main-footer" style="display:none;">
   <div class="footer-inner">
     <div class="footer-brand">
       <div class="footer-logo-row">
@@ -1615,4 +1688,4 @@ if(savedUser){go('catalogo');}else{go('login');}
   </div>
   <div class="footer-bottom">
     <p>© 2025 Fashion Peak — Todos los derechos reservados</p>
-    <p>Desarrollado por Laura Valentina Torres Chaparro &mdash; SENA Ficha 2977463
+    <p>Desarrollado por 
